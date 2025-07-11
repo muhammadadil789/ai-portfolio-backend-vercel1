@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Portfolio Manager</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      color: #333;
+      text-align: center;
+      padding: 40px;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 400px;
+      margin: 0 auto;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .loading {
+      color: gray;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🧞 Aladdin AI Portfolio Tool</h1>
+
+  <div class="card" id="portfolioCard">
+    <p class="loading">Loading from backend...</p>
+  </div>
+
+  <script>
+    async function loadPortfolio() {
+      const card = document.getElementById("portfolioCard");
+      try {
+        const res = await fetch("https://ai-portfolio-backend-vercel1.vercel.app/api/hello");
+        const data = await res.json();
+        card.innerHTML = `
+          <h2>✅ Backend Connected</h2>
+          <p><strong>Message:</strong> ${data.message}</p>
+        `;
+      } catch (err) {
+        card.innerHTML = `
+          <h2>❌ Error</h2>
+          <p>Could not connect to backend API.</p>
+        `;
+      }
+    }
+
+    loadPortfolio();
+  </script>
+
+</body>
+  </html><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Portfolio Manager</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      color: #333;
+      text-align: center;
+      padding: 40px;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 400px;
+      margin: 0 auto;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .loading {
+      color: gray;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🧞 Aladdin AI Portfolio Tool</h1>
+
+  <div class="card" id="portfolioCard">
+    <p class="loading">Loading from backend...</p>
+  </div>
+
+  <script>
+    async function loadPortfolio() {
+      const card = document.getElementById("portfolioCard");
+      try {
+        const res = await fetch("https://ai-portfolio-backend-vercel1.vercel.app/api/hello");
+        const data = await res.json();
+        card.innerHTML = `
+          <h2>✅ Backend Connected</h2>
+          <p><strong>Message:</strong> ${data.message}</p>
+        `;
+      } catch (err) {
+        card.innerHTML = `
+          <h2>❌ Error</h2>
+          <p>Could not connect to backend API.</p>
+        `;
+      }
+    }
+
+    loadPortfolio();
+  </script>
+
+</body>
+</html>

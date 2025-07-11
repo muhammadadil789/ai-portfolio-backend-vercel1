@@ -8,6 +8,9 @@ l<script>
       const data = await res.json();
 
       card.innerHTML = `
+      <<div id="marketData" style="margin-top: 30px; padding: 10px; border: 1px solid #ccc; border-radius: 12px; background-color: #f9f9f9;">
+  <h3>📡 Market Prices Loading...</h3>
+</div>
         <h2>🧞 Aladdin AI Advice</h2>
         <p>${data.ai_advice}</p>
         <button onclick="loadAIAdvice()">🔁 Refresh Advice</button>
@@ -21,4 +24,58 @@ l<script>
   }
 
   loadAIAdvice();
-</script>
+</<script>
+  async function loadMarketData() {
+    const marketDiv = document.getElementById("marketData");
+    marketDiv.innerHTML = "<p>📊 Fetching prices...</p>";
+
+    try {
+      const res = await fetch("https://ai-portfolio-backend-vercel1.vercel.app/api/market");
+      const data = await res.json();
+
+      if (data.prices && Array.isArray(data.prices)) {
+        marketDiv.innerHTML = `
+          <h3>📈 Live Market Prices</h3>
+          ${data.prices.map(p => `
+            <p><strong>${p.symbol}:</strong> $${p.price}</p>
+          `).join('')}
+        `;
+      } else {
+        marketDiv.innerHTML = "<p>⚠️ No price data found.</p>";
+      }
+
+    } catch (e) {
+      marketDiv.innerHTML = "<p>❌ Failed to load market data.</p>";
+      console.error("Error fetching market data:", e);
+    }
+  }
+
+  loadMarketData(); // Auto-run when page loads
+</script><script>
+  async function loadMarketData() {
+    const marketDiv = document.getElementById("marketData");
+    marketDiv.innerHTML = "<p>📊 Fetching prices...</p>";
+
+    try {
+      const res = await fetch("https://ai-portfolio-backend-vercel1.vercel.app/api/market");
+      const data = await res.json();
+
+      if (data.prices && Array.isArray(data.prices)) {
+        marketDiv.innerHTML = `
+          <h3>📈 Live Market Prices</h3>
+          ${data.prices.map(p => `
+            <p><strong>${p.symbol}:</strong> $${p.price}</p>
+          `).join('')}
+        `;
+      } else {
+        marketDiv.innerHTML = "<p>⚠️ No price data found.</p>";
+      }
+
+    } catch (e) {
+      marketDiv.innerHTML = "<p>❌ Failed to load market data.</p>";
+      console.error("Error fetching market data:", e);
+    }
+  }
+
+  loadMarketData(); // Auto-run when page loads
+</script>>

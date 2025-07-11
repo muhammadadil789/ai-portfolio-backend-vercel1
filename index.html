@@ -3,112 +3,85 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AI Portfolio by Adil</title>
+  <title>Aladdin AI Portfolio</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f5f5f5;
+      background-color: #f2f4f8;
       color: #222;
-      margin: 0;
-      padding: 20px;
+      padding: 30px;
+      max-width: 800px;
+      margin: auto;
     }
-
-    h1, h2 {
-      color: #333;
+    h1 {
+      text-align: center;
+      color: #2d2d9f;
     }
-
-    .card {
+    .section {
       background: white;
       padding: 20px;
-      margin-bottom: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin-top: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
     }
-
-    .title {
-      font-size: 1.5em;
-      margin-bottom: 10px;
+    .section h2 {
+      color: #111;
     }
-
-    #refreshBtn {
-      background-color: #007bff;
-      color: white;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 8px;
-      cursor: pointer;
+    .price {
+      font-size: 20px;
+      margin: 5px 0;
     }
-
-    #refreshBtn:hover {
-      background-color: #0056b3;
-    }
-
     .loading {
-      color: #888;
+      color: gray;
     }
   </style>
 </head>
 <body>
+  <h1>🧠 Aladdin AI Portfolio Dashboard</h1>
 
-  <h1>💼 Aladdin AI Portfolio System</h1>
-
-  <!-- AI Advice Section -->
-  <div class="card">
-    <div class="title">🧠 Aladdin AI Advice</div>
-    <p id="aiAdvice" class="loading">Loading advice from AI...</p>
-    <button id="refreshBtn">🔁 Refresh Advice</button>
+  <div class="section">
+    <h2>📊 Live Market Data</h2>
+    <div class="price">SPY Price: <span id="spy-price" class="loading">Loading...</span></div>
+    <div class="price">BTC/USD: <span id="btc-price" class="loading">Loading...</span></div>
+    <div class="price">AAPL Price: <span id="aapl-price" class="loading">Loading...</span></div>
   </div>
 
-  <!-- Market Data Section -->
-  <div class="card" id="marketData">
-    <div class="title">📊 Live Market Data</div>
-    <p class="loading">Loading prices...</p>
+  <div class="section">
+    <h2>🧠 Aladdin AI Advice</h2>
+    <div id="ai-advice" class="loading">Loading advice...</div>
   </div>
 
   <script>
-    // Fetch AI Advice
-    async function loadAIAdvice() {
-      const advice = document.getElementById("aiAdvice");
-      advice.textContent = "Loading advice from AI...";
+    const twelveDataApiKey = "60acf92c37d64c1580cd4751551d9cc8";
 
+    async function fetchPrice(symbol, elementId) {
+      const url = `https://api.twelvedata.com/price?symbol=${symbol}&apikey=${twelveDataApiKey}`;
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        document.getElementById(elementId).innerText = data.price || "N/A";
+      } catch (err) {
+        document.getElementById(elementId).innerText = "Error";
+        console.error(`Error loading ${symbol}:`, err);
+      }
+    }
+
+    async function fetchAIAdvice() {
       try {
         const res = await fetch("https://ai-portfolio-backend-vercel1.vercel.app/api/openai");
         const data = await res.json();
-        advice.textContent = data.advice || "No advice received.";
+        document.getElementById("ai-advice").innerText = data.advice || "No advice.";
       } catch (err) {
-        advice.textContent = "❌ Failed to load AI advice.";
+        document.getElementById("ai-advice").innerText = "Error getting advice.";
+        console.error("AI error:", err);
       }
     }
 
-    // Refresh Button
-    document.getElementById("refreshBtn").addEventListener("click", loadAIAdvice);
-
-    // Load Market Data
-    async function loadMarketData() {
-      const marketDiv = document.getElementById("marketData");
-      marketDiv.innerHTML = "<div class='title'>📊 Live Market Data</div><p class='loading'>Loading...</p>";
-
-      try {
-        const res = await fetch("https://ai-portfolio-backend-vercel1.vercel.app/api/market");
-        const data = await res.json();
-
-        if (data.prices && Array.isArray(data.prices)) {
-          marketDiv.innerHTML = `<div class='title'>📊 Live Market Data</div>` +
-            data.prices.map(p => `
-              <p><strong>${p.symbol}:</strong> $${p.price}</p>
-            `).join('');
-        } else {
-          marketDiv.innerHTML = "<p>⚠️ No price data found.</p>";
-        }
-      } catch (e) {
-        marketDiv.innerHTML = "<p>❌ Failed to load market data.</p>";
-      }
-    }
-
-    // Load both sections on page load
-    loadAIAdvice();
-    loadMarketData();
+    // Load everything on page load
+    fetchPrice("SPY", "spy-price");
+    fetchPrice("BTC/USD", "btc-price");
+    fetchPrice("AAPL", "aapl-price");
+    fetchAIAdvice();
   </script>
-
 </body>
 </html>

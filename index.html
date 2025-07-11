@@ -1,81 +1,114 @@
-l<script>
-  async function loadAIAdvice() {
-    const card = document.getElementById("portfolioCard");
-    card.innerHTML = "<p>🤖 Thinking like Aladdin...</p>";
-
-    try {
-      const res = await fetch("https://ai-portfolio-backend-vercel1.vercel.app/api/openai");
-      const data = await res.json();
-
-      card.innerHTML = `
-      <<div id="marketData" style="margin-top: 30px; padding: 10px; border: 1px solid #ccc; border-radius: 12px; background-color: #f9f9f9;">
-  <h3>📡 Market Prices Loading...</h3>
-</div>
-        <h2>🧞 Aladdin AI Advice</h2>
-        <p>${data.ai_advice}</p>
-        <button onclick="loadAIAdvice()">🔁 Refresh Advice</button>
-      `;
-    } catch (err) {
-      card.innerHTML = `
-        <h2>❌ Error</h2>
-        <p>Could not get AI advice. Try again later.</p>
-      `;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Portfolio by Adil</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      color: #222;
+      margin: 0;
+      padding: 20px;
     }
-  }
 
-  loadAIAdvice();
-</<script>
-  async function loadMarketData() {
-    const marketDiv = document.getElementById("marketData");
-    marketDiv.innerHTML = "<p>📊 Fetching prices...</p>";
+    h1, h2 {
+      color: #333;
+    }
 
-    try {
-      const res = await fetch("https://ai-portfolio-backend-vercel1.vercel.app/api/market");
-      const data = await res.json();
+    .card {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
 
-      if (data.prices && Array.isArray(data.prices)) {
-        marketDiv.innerHTML = `
-          <h3>📈 Live Market Prices</h3>
-          ${data.prices.map(p => `
-            <p><strong>${p.symbol}:</strong> $${p.price}</p>
-          `).join('')}
-        `;
-      } else {
-        marketDiv.innerHTML = "<p>⚠️ No price data found.</p>";
+    .title {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+    }
+
+    #refreshBtn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #refreshBtn:hover {
+      background-color: #0056b3;
+    }
+
+    .loading {
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>💼 Aladdin AI Portfolio System</h1>
+
+  <!-- AI Advice Section -->
+  <div class="card">
+    <div class="title">🧠 Aladdin AI Advice</div>
+    <p id="aiAdvice" class="loading">Loading advice from AI...</p>
+    <button id="refreshBtn">🔁 Refresh Advice</button>
+  </div>
+
+  <!-- Market Data Section -->
+  <div class="card" id="marketData">
+    <div class="title">📊 Live Market Data</div>
+    <p class="loading">Loading prices...</p>
+  </div>
+
+  <script>
+    // Fetch AI Advice
+    async function loadAIAdvice() {
+      const advice = document.getElementById("aiAdvice");
+      advice.textContent = "Loading advice from AI...";
+
+      try {
+        const res = await fetch("https://ai-portfolio-backend-vercel1.vercel.app/api/openai");
+        const data = await res.json();
+        advice.textContent = data.advice || "No advice received.";
+      } catch (err) {
+        advice.textContent = "❌ Failed to load AI advice.";
       }
-
-    } catch (e) {
-      marketDiv.innerHTML = "<p>❌ Failed to load market data.</p>";
-      console.error("Error fetching market data:", e);
     }
-  }
 
-  loadMarketData(); // Auto-run when page loads
-</script><script>
-  async function loadMarketData() {
-    const marketDiv = document.getElementById("marketData");
-    marketDiv.innerHTML = "<p>📊 Fetching prices...</p>";
+    // Refresh Button
+    document.getElementById("refreshBtn").addEventListener("click", loadAIAdvice);
 
-    try {
-      const res = await fetch("https://ai-portfolio-backend-vercel1.vercel.app/api/market");
-      const data = await res.json();
+    // Load Market Data
+    async function loadMarketData() {
+      const marketDiv = document.getElementById("marketData");
+      marketDiv.innerHTML = "<div class='title'>📊 Live Market Data</div><p class='loading'>Loading...</p>";
 
-      if (data.prices && Array.isArray(data.prices)) {
-        marketDiv.innerHTML = `
-          <h3>📈 Live Market Prices</h3>
-          ${data.prices.map(p => `
-            <p><strong>${p.symbol}:</strong> $${p.price}</p>
-          `).join('')}
-        `;
-      } else {
-        marketDiv.innerHTML = "<p>⚠️ No price data found.</p>";
+      try {
+        const res = await fetch("https://ai-portfolio-backend-vercel1.vercel.app/api/market");
+        const data = await res.json();
+
+        if (data.prices && Array.isArray(data.prices)) {
+          marketDiv.innerHTML = `<div class='title'>📊 Live Market Data</div>` +
+            data.prices.map(p => `
+              <p><strong>${p.symbol}:</strong> $${p.price}</p>
+            `).join('');
+        } else {
+          marketDiv.innerHTML = "<p>⚠️ No price data found.</p>";
+        }
+      } catch (e) {
+        marketDiv.innerHTML = "<p>❌ Failed to load market data.</p>";
       }
-
-    } catch (e) {
-      marketDiv.innerHTML = "<p>❌ Failed to load market data.</p>";
-      console.error("Error fetching market data:", e);
     }
-  }
 
-  loadMarketData(); // Auto-run when page loads
-</script>>
+    // Load both sections on page load
+    loadAIAdvice();
+    loadMarketData();
+  </script>
+
+</body>
+</html>
